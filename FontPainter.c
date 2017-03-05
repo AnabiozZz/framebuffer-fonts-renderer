@@ -1,15 +1,3 @@
-/*
- ============================================================================
- Name        : TestFon.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
-
-
-
 
 #include "FontPainter.h"
 
@@ -29,12 +17,13 @@ struct fb_fix_screeninfo finfo;
 /** 
 @function Font_Init
 Инициализация шрифта. Запускает библиотеку Freetype и устанавливает нужный шрифт
+Initialize freetype library and load font
 @param filename - путь к файлу шрифта
 */
 void Font_Init (char* filename)
 {
 	  error = FT_Init_FreeType( &library );              /* initialize library */
-	  /* error handling omitted */
+	  
 
 	  error = FT_New_Face( library, filename, 0, &face );/* create face object */
 	  /* error handling omitted */
@@ -47,6 +36,7 @@ void Font_Init (char* filename)
  /** 
  @function FB_Init
  Инициализация фрейм буфера. Считывает и выводит параметры экрана
+ Initialize linux framebuffer.
  */
 void FB_Init (void)
 {
@@ -57,14 +47,14 @@ void FB_Init (void)
 	  }
 	  printf("The framebuffer device was opened successfully.\n");
 
-	  // Get fixed screen information
+	  
 	  if (ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo) == -1)
 	  {
 	  perror("Error reading fixed information");
 	  exit(2);
 	  }
 
-	  // Get variable screen information
+	  
 	  if (ioctl(fbfd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
 	  perror("Error reading variable information");
 	  exit(3);
@@ -72,10 +62,10 @@ void FB_Init (void)
 
 	  printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
-	  // Figure out the size of the screen in bytes
+	  
 	  screensize = vinfo.xres * vinfo.yres * vinfo.bits_per_pixel / 8;
 
-	  // Map the device to memory
+	  
 	  fbp = (char *)mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED,
 	  fbfd, 0);
 	  if ((int)fbp == -1) {
@@ -87,6 +77,7 @@ void FB_Init (void)
 /** 
 @function Font_Render 
 Функция для рендера и вывода во фрейм буфер изображения текста, введенного пользователем
+Render text and output it into framebuffer
 @param x_origin - Отступ слева (в пикселях)
 @param y_origin - Отступ сверху (в пикселях)
 @param height - Высота окна, в котором будет выводиться текст (в пикселях)
@@ -156,7 +147,7 @@ void Font_Render( int x_origin, int y_origin, int height, int width, int pt_def,
 
   							    y_drw = rows[row_pos].height*row_pos - slot->bitmap_top;
 
-  							  // Draw one symbol
+  							  
   							    FT_Int  i, j, p, q;
   							    FT_Int  x_max = x_drw + bitmap->width;
   							    FT_Int  y_max = y_drw + bitmap->rows;
@@ -206,7 +197,7 @@ void Font_Render( int x_origin, int y_origin, int height, int width, int pt_def,
 
 
 
-//  Show it
+
   	  int  c, v;
   	  unsigned char grade;
   	  for ( c = 0; c < (rows[row_pos-1].height*(row_pos)); c++ )
@@ -227,8 +218,8 @@ void Font_Render( int x_origin, int y_origin, int height, int width, int pt_def,
   	        } else
   	        {
   	        	int b = grade;
-  	        	int g = grade; // A little green
-  	        	int r = grade; // A lot of red
+  	        	int g = grade; 
+  	        	int r = grade; 
   	        	int t = r << 11 || g << 5 || b;
   	        	*((unsigned short int*)(fbp + location)) = t;
   	        }
